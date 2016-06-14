@@ -26,6 +26,7 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     boolean[][] buttons;
+    boolean[][][] wholeYear = new boolean[12][6][7];
     String[] months = new String[]{"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
     int currentMonth;
     int x;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         setContentView(R.layout.activity_main);
         LinearLayout sv = (LinearLayout) findViewById(R.id.scroll);
-        LinearLayout ps = displayCurrentCalendar(c);
+        LinearLayout ps = displayCalendar(c, true, new boolean[6][7], 0);
         sv.addView(ps);
 
         int currentMonth = c.get(Calendar.MONTH) + 1;
@@ -46,15 +47,16 @@ public class MainActivity extends AppCompatActivity {
             currentMonth += 1;
             if(currentMonth > 11)
                 c.set(Calendar.YEAR, c.get(Calendar.YEAR)+1);
-                i = i % 12;
+            i = i % 12;
             c.set(Calendar.MONTH, currentMonth);
             c.set(Calendar.DAY_OF_MONTH, 1);
-            ps = displayCurrentCalendar(c);
+            ps = displayCalendar(c, false, new boolean[6][7], i+1);
             sv.addView(ps);
         }
     }
 
-    private LinearLayout displayCurrentCalendar(Calendar c){
+    private LinearLayout displayCalendar(Calendar c, boolean current, boolean[][] bu, int index){
+        buttons = bu;
         currentMonth = 0;
         int day = c.get(Calendar.DATE) ;
         int month = c.get(Calendar.MONTH);
@@ -75,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         punchsheet.setPadding(20, 20, 20, 20);
         punchsheet.setBackgroundColor(0xff2299dd);
         punchsheet.addView(monthname);
-        buttons = new boolean[6][7];
         lp = new LinearLayout.LayoutParams(120, 120);
         lp.setMargins(20, 20, 20, 20);
         String[] days = new String[]{"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 else if(currentdate < day && currentdate > 0){ //add when date is past number of days in the month
                     b.getBackground().setAlpha(50);
                 }
-                else if(currentdate == day) {
+                else if(currentdate == day && current) {
                     b.setBackgroundResource(R.drawable.darkcircle);
                 }
                 else{
@@ -134,12 +135,11 @@ public class MainActivity extends AppCompatActivity {
                 buttons[i][j] = false;
             }
             punchsheet.addView(week);
+            wholeYear[index] = buttons;
         }
         return punchsheet;
+    }
 
-    }
-    public void punch(View view){
-        Log.d("alyssa", "hello");
-    }
+
 
 }
